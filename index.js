@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { MongoClient } = require('mongodb');
+const { MongoClient, Compressor } = require('mongodb');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
@@ -16,7 +16,16 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         await client.connect();
-        console.log('database connocet wow wow');
+        // console.log('database connocet wow wow');
+        const database = client.db('wallet');
+        const productsCollection = database.collection('products');
+
+        //GET product API
+        app.get('/products', async(req, res) =>{
+            const cursor = productsCollection.find({});
+            const products = await cursor.toArray();
+            res.send(products);
+        })
     }
     finally{
         // await client.close();
