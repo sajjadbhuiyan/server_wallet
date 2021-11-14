@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { MongoClient, Compressor } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
@@ -25,6 +26,15 @@ async function run(){
             const cursor = productsCollection.find({});
             const products = await cursor.toArray();
             res.send(products);
+        })
+
+        // GET sengle Product
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('getting specific service', id);
+            const query = {_id: ObjectId(id)};
+            const product = await productsCollection.findOne(query);
+            res.json(product);
         })
     }
     finally{
